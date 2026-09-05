@@ -14,6 +14,7 @@ interface Messages {
   readonly scopeEmpty: string;
   readonly scopeUnmatched: string;
   readonly scopeOverlap: string;
+  readonly scopeInFlight: string;
   readonly criteriaMissing: string;
   readonly criteriaUnverifiable: string;
   readonly nothingToCheck: string;
@@ -35,6 +36,9 @@ const EN: Messages = {
   scopeOverlap:
     "Their scopes overlap. Running these at the same time guarantees a conflict "
     + "for whichever lands second.",
+  scopeInFlight:
+    "This Issue's scope is already being edited by an open pull request. "
+    + "Starting it now means rewriting whichever lands second, and that will be this one.",
   criteriaMissing:
     "No acceptance criteria. A reviewer has nothing to judge the result against.",
   criteriaUnverifiable:
@@ -63,6 +67,9 @@ const JA: Messages = {
   scopeOverlap:
     "対象範囲が重なっています。この2つを同時に走らせると、"
     + "あとから出す方が必ずコンフリクトします。",
+  scopeInFlight:
+    "この Issue の対象範囲は、すでに開いている PR が触っています。"
+    + "いま始めると、あとから出す方——つまりこちら——がやり直しになります。",
   criteriaMissing: "受け入れ条件がありません。レビュアーが判定の根拠を持てません。",
   criteriaUnverifiable:
     "判定できない受け入れ条件があります。具体的な値（コマンド・状態コード・"

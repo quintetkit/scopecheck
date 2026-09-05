@@ -9,19 +9,50 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import type { Issue } from "./parse.ts";
 
+/**
+ * `gh api` を叩いて配列を返す。
+ *
+ * `--paginate` は JSON 配列を連結して返すことがある（`][` で繋がる）ので、
+ * そのままでは JSON.parse が失敗する。区切って読み直す。
+ */
+function gh(args: readonly string[]): any[] {
+  const out = execFileSync("gh", ["api", ...args], {
+    encoding: "utf8",
+    maxBuffer: 32 * 1024 * 1024,
+  });
+  return JSON.parse(`[${out.replace(/\]\s*\[/g, "],[")}]`).flat();
+}
+
 /** `gh` 経由で open な Issue を取る。PR は除く。 */
 export function fromRepo(repo: string): Issue[] {
-  const out = execFileSync(
-    "gh",
-    ["api", "--paginate", `repos/${repo}/issues?state=open&per_page=100`],
-    { encoding: "utf8", maxBuffer: 32 * 1024 * 1024 },
-  );
-  // --paginate は JSON 配列を連結して返すことがあるので、配列ごとに読む
-  const chunks = out.replace(/\]\s*\[/g, "],[");
-  const items: any[] = JSON.parse(`[${chunks}]`).flat();
-  return items
+  return gh(["--paginate", `repos/${repo}/issues?state=open&per_page=100`])
     .filter((i) => !i.pull_request)
     .map((i) => ({ id: `#${i.number}`, title: String(i.title ?? ""), body: String(i.body ?? "") }));
+}
+
+export interface PullRequest {
+  readonly id: string;
+  readonly title: string;
+  readonly files: readonly string[];
+}
+
+/**
+ * 開いている PR と、それが触っているファイル。
+ *
+ * Issue どうしの重なりより、**すでに動いている PR との重なり**のほうが切実。
+ * Issue はまだ着手前だが、PR はもう書かれているので、
+ * ぶつかると捨てるのは必ずこれから始める方になる。
+ *
+ * PR 1件ごとに1回叩くので、多いリポジトリでは `limit` で頭を打つ。
+ */
+export function openPullFiles(repo: string, limit = 30): PullRequest[] {
+  const list = gh([`repos/${repo}/pulls?state=open&per_page=100`]);
+  return list.slice(0, limit).map((pr: any) => ({
+    id: `PR #${pr.number}`,
+    title: String(pr.title ?? ""),
+    files: gh([`repos/${repo}/pulls/${pr.number}/files?per_page=100`, "--paginate"])
+      .map((f: any) => String(f.filename)),
+  }));
 }
 
 /** ディレクトリ直下の Markdown を、1ファイル1 Issue として読む。 */

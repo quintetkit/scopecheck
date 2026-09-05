@@ -67,11 +67,17 @@ so ignored and generated files never count as an overlap.
 | rule | level | what it means |
 |---|---|---|
 | `scope-overlap` | error | Two Issues match the same file. Names the files. |
+| `scope-inflight` | error | An Issue's scope is already being edited by an open pull request. |
 | `scope-missing` | error | No scope section. Nothing to compare. |
 | `scope-empty` | error | The section exists but declares no path. |
 | `scope-unmatched` | warn | A pattern matches nothing in the repository. |
 | `criteria-missing` | error | No acceptance criteria for a reviewer to judge against. |
 | `criteria-unverifiable` | warn | A criterion with no concrete value in it. |
+
+`scope-inflight` is the one worth having in CI. Two Issues that overlap are a
+planning problem you can still fix; an Issue that overlaps a **pull request
+already open** is work someone is doing right now, and whichever lands second
+gets rewritten. That will be the one you were about to start.
 
 `criteria-unverifiable` is deliberately narrow. It fires only when a line
 contains a vague word **and** contains no code span, no number, and no quoted

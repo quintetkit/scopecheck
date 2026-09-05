@@ -64,11 +64,17 @@ scopecheck --repo owner/name --format github --strict
 | ルール | 深刻度 | 内容 |
 |---|---|---|
 | `scope-overlap` | error | 2つの Issue が同じファイルを含む。**ファイル名を出します** |
+| `scope-inflight` | error | 対象範囲を、**すでに開いている PR が触っている** |
 | `scope-missing` | error | 対象範囲の節が無い。比べるものが無い |
 | `scope-empty` | error | 節はあるがパスが書かれていない |
 | `scope-unmatched` | warn | どのファイルにも当たらないパターン |
 | `criteria-missing` | error | 受け入れ条件が無い。レビュアーが判定できない |
 | `criteria-unverifiable` | warn | 具体的な値が1つも無い受け入れ条件 |
+
+CI に入れる価値があるのは `scope-inflight` です。
+Issue どうしの重なりは、まだ計画の問題として直せます。
+**すでに開いている PR** との重なりは、いま誰かが書いている作業とぶつかるということで、
+あとから出す方がやり直しになります。**それは、これから始める方です。**
 
 `criteria-unverifiable` は**意図的に狭く**してあります。
 曖昧語があり、**かつ**コード・数字・引用が1つも無いときだけ報告します。

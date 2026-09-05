@@ -10,7 +10,7 @@
 import { check } from "./check.ts";
 import { exitCode, formatGithub, formatHuman, formatJson, type Result } from "./report.ts";
 import { messages, pickLang } from "./messages.ts";
-import { fromDir, fromRepo, trackedFiles } from "./sources.ts";
+import { fromDir, fromRepo, openPullFiles, trackedFiles } from "./sources.ts";
 
 const args = process.argv.slice(2);
 const flag = (name: string): string | undefined => {
@@ -34,11 +34,13 @@ Options:
   --root path                 working copy whose files are matched (default: cwd)
   --format human|github|json  output format (default: human)
   --lang   en|ja              message language (default: en, or SCOPECHECK_LANG)
+  --no-prs                    skip the comparison against open pull requests
   --strict                    exit 1 on warnings too
   --help                      this
 
 Checks:
   scope-overlap          two Issues match the same file
+  scope-inflight         an Issue's scope is already being edited by an open PR
   scope-missing/empty    no scope is declared
   scope-unmatched        a pattern matches nothing in the repository
   criteria-missing       no acceptance criteria
@@ -67,7 +69,19 @@ try {
 }
 
 const files = trackedFiles(flag("root") ?? process.cwd());
-const findings = check(issues, { files, lang });
+
+// 開いている PR との衝突も見る。--repo のときだけ（ローカルには PR が無い）
+let inFlight;
+if (repo && !has("no-prs")) {
+  try {
+    inFlight = openPullFiles(repo);
+  } catch (e) {
+    // PR が取れなくても Issue どうしの検査は成立する。黙って落とさない
+    console.error(`(open PR を取得できませんでした: ${(e as Error).message})`);
+  }
+}
+
+const findings = check(issues, { files, inFlight, lang });
 const result: Result = {
   findings,
   checked: issues.map((i) => i.id),

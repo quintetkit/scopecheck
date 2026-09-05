@@ -102,6 +102,34 @@ ok(!realFindings.some((f) => f.rule === "scope-empty"),
 ok(realFindings.some((f) => f.rule === "scope-overlap"),
    "同時に開いていれば重なる組がある");
 
+// ------------------------------------------------------ 開いている PR
+console.log("in-flight PR");
+const withPr = check(
+  [{ id: "#7", title: "auth", body: "## Scope\n\n- `src/auth/**`\n\n## Acceptance criteria\n\n- `npm test` passes" }],
+  {
+    files: FILES,
+    inFlight: [
+      { id: "PR #9", title: "refactor auth", files: ["src/auth/token.ts", "docs/x.md"] },
+      { id: "PR #10", title: "unrelated", files: ["README.md"] },
+    ],
+  },
+);
+const fl = withPr.filter((f) => f.rule === "scope-inflight");
+ok(fl.length === 1, `衝突している PR だけを出す（出たもの: ${fl.length}）`);
+ok(fl[0]?.detail?.join() === "src/auth/token.ts", "触っているファイルを名指しする");
+ok(fl[0]?.where === "#7 ✕ PR #9", `どの PR かを出す（出たもの: ${fl[0]?.where}）`);
+
+const allowedPr = check(
+  [{
+    id: "#8",
+    title: "auth",
+    body: "<!-- scopecheck: allow-overlap -->\n## Scope\n\n- `src/auth/**`\n\n"
+      + "## Acceptance criteria\n\n- `npm test` passes",
+  }],
+  { files: FILES, inFlight: [{ id: "PR #9", title: "x", files: ["src/auth/token.ts"] }] },
+);
+ok(!allowedPr.some((f) => f.rule === "scope-inflight"), "明示的に許可されていれば出さない");
+
 // ------------------------------------------------- 検査できなかったとき
 console.log("blind spot");
 const { blindSpot, exitCode } = await import("../src/report.ts");

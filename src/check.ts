@@ -85,9 +85,17 @@ function checkOne(p: Parsed, m: ReturnType<typeof messages>): Finding[] {
   return out;
 }
 
+export interface InFlight {
+  readonly id: string;
+  readonly title: string;
+  readonly files: readonly string[];
+}
+
 export interface Options {
   /** リポジトリのファイル一覧。空なら scope-unmatched は検査しない */
   readonly files: readonly string[];
+  /** すでに開いている PR と、それが触っているファイル */
+  readonly inFlight?: readonly InFlight[];
   /** 既定は英語 */
   readonly lang?: Lang;
 }
@@ -116,6 +124,24 @@ export function check(issues: readonly Issue[], opts: Options): Finding[] {
           detail: dead,
         });
       }
+    }
+  }
+
+  // すでに書かれている PR との衝突。Issue どうしより優先して出す。
+  // ぶつかったとき捨てるのは、必ずこれから始める側になる
+  for (const p of parsed) {
+    const scope = expanded.get(p.issue.id);
+    if (!scope || scope.size === 0 || p.allowOverlap) continue;
+    for (const pr of opts.inFlight ?? []) {
+      const shared = pr.files.filter((f) => scope.has(f));
+      if (shared.length === 0) continue;
+      out.push({
+        level: "error",
+        rule: "scope-inflight",
+        where: `${p.issue.id} ✕ ${pr.id}`,
+        message: m.scopeInFlight,
+        detail: shared.slice(0, 10),
+      });
     }
   }
 
