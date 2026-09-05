@@ -1,0 +1,29 @@
+name: scopecheck
+description: 開いている Issue を、同時に走らせて安全か検査する（対象範囲の重なりを検出）
+branding:
+  icon: git-branch
+  color: orange
+
+inputs:
+  repo:
+    description: 検査するリポジトリ（owner/name）
+    required: false
+    default: ${{ github.repository }}
+  strict:
+    description: warn でも失敗させる場合は true
+    required: false
+    default: "false"
+
+runs:
+  using: composite
+  steps:
+    - name: scopecheck
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        set -euo pipefail
+        extra=""
+        if [ "${{ inputs.strict }}" = "true" ]; then extra="--strict"; fi
+        node "${{ github.action_path }}/src/cli.ts" \
+          --repo "${{ inputs.repo }}" --root "$GITHUB_WORKSPACE" --format github $extra

@@ -1,0 +1,27 @@
+name: CI
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.6"
+      - run: node test/run.ts
+
+  self-check:
+    # 自分自身の Issue を自分で検査する。動かないものは出さない
+    runs-on: ubuntu-latest
+    permissions:
+      issues: read
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.6"
+      - env:
+          GH_TOKEN: ${{ github.token }}
+        run: node src/cli.ts --repo "$GITHUB_REPOSITORY" --root . --format github
