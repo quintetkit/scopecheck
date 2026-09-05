@@ -1,0 +1,10 @@
+{
+  "name": "scopecheck",
+  "version": "1.0.0",
+  "description": "Tells you whether your open GitHub Issues can safely run in parallel",
+  "type": "module",
+  "license": "MIT",
+  "bin": { "scopecheck": "src/cli.ts" },
+  "engines": { "node": ">=22.18" },
+  "scripts": { "test": "node test/run.ts" }
+}

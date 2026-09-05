@@ -3,13 +3,25 @@ on: [push, pull_request]
 
 jobs:
   test:
+    # 22.18 は型注釈の除去が既定で有効になった最初の版。
+    # ここが動くことを言うなら、ここで試すしかない
+    strategy:
+      matrix:
+        node: ["22.18", "24"]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "22.6"
+          node-version: ${{ matrix.node }}
       - run: node test/run.ts
+      - name: 壊れた入力では 1 で終わること
+        run: |
+          set +e
+          node src/cli.ts --dir test/fixtures/broken --root . > /dev/null
+          code=$?
+          set -e
+          [ "$code" = "1" ] || { echo "終了コードが $code（1 のはず）"; exit 1; }
 
   self-check:
     # 自分自身の Issue を自分で検査する。動かないものは出さない
@@ -21,7 +33,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "22.6"
+          node-version: "24"
       - env:
           GH_TOKEN: ${{ github.token }}
         run: node src/cli.ts --repo "$GITHUB_REPOSITORY" --root . --format github

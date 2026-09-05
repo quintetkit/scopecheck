@@ -37,7 +37,7 @@ declaration is already in the Issue; nothing checks it.
 
 ## Install
 
-Requires Node 22.6 or newer (it runs TypeScript directly, no build step) and
+Requires Node 22.18 or newer (it runs TypeScript directly, with no build step) and
 [`gh`](https://cli.github.com/) if you read Issues from GitHub.
 
 ```bash
