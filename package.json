@@ -1,6 +1,6 @@
 {
   "name": "@quintetkit/scopecheck",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Tells you whether your open GitHub Issues can safely run in parallel",
   "type": "module",
   "license": "MIT",
@@ -38,7 +38,8 @@
     "dist",
     "README.md",
     "README.ja.md",
-    "LICENSE"
+    "LICENSE",
+    "CHANGELOG.md"
   ],
   "devDependencies": {
     "@types/node": "^26.4.1",
