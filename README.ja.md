@@ -168,6 +168,9 @@ scopecheck は、そのワークフローが前提にしている
 npx @quintetkit/sharedfiles
 ```
 
+UI 設計人格・レビュー基準・Issue 単位の並列実行スクリプト・実践ガイド10章を足した
+[Quintet は有料](https://quartet-dev.booth.pm/items/8807156)です。
+
 ## ライセンス
 
 MIT
