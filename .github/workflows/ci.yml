@@ -15,6 +15,14 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
       - run: node test/run.ts
+      - name: npm に出す形（コンパイル済み）でも動くこと
+        run: |
+          npm ci --silent || npm install --silent
+          npm pack --silent
+          tmp=$(mktemp -d); cd "$tmp"
+          npm init -y > /dev/null
+          npm install --silent "$GITHUB_WORKSPACE"/quintetkit-scopecheck-*.tgz
+          npx scopecheck --help > /dev/null
       - name: 壊れた入力では 1 で終わること
         run: |
           set +e

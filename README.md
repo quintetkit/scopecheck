@@ -37,13 +37,24 @@ declaration is already in the Issue; nothing checks it.
 
 ## Install
 
-Requires Node 22.18 or newer (it runs TypeScript directly, with no build step) and
-[`gh`](https://cli.github.com/) if you read Issues from GitHub.
+```bash
+npx @quintetkit/scopecheck --repo owner/name
+```
+
+No install, no build. **Zero runtime dependencies.**
+
+Requires Node 22.18 or newer, and [`gh`](https://cli.github.com/) if you read
+Issues from GitHub.
+
+From a clone, the TypeScript runs directly with no build step:
 
 ```bash
 git clone https://github.com/quintetkit/scopecheck
 node scopecheck/src/cli.ts --repo owner/name
 ```
+
+(The npm package ships compiled JavaScript because Node refuses to strip types
+from files under `node_modules`. The source is what runs from a clone.)
 
 ## Use
 

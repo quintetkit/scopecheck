@@ -1,10 +1,46 @@
 {
-  "name": "scopecheck",
-  "version": "1.0.0",
+  "name": "@quintetkit/scopecheck",
+  "version": "1.1.0",
   "description": "Tells you whether your open GitHub Issues can safely run in parallel",
   "type": "module",
   "license": "MIT",
-  "bin": { "scopecheck": "src/cli.ts" },
-  "engines": { "node": ">=22.18" },
-  "scripts": { "test": "node test/run.ts" }
+  "bin": {
+    "scopecheck": "dist/cli.js"
+  },
+  "engines": {
+    "node": ">=22.18"
+  },
+  "scripts": {
+    "test": "node test/run.ts",
+    "build": "tsc -p tsconfig.json",
+    "prepack": "tsc -p tsconfig.json"
+  },
+  "keywords": [
+    "github",
+    "issues",
+    "parallel",
+    "claude-code",
+    "cli",
+    "static-analysis",
+    "developer-tools",
+    "ai-assisted-development"
+  ],
+  "homepage": "https://github.com/quintetkit/scopecheck#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/quintetkit/scopecheck.git"
+  },
+  "bugs": {
+    "url": "https://github.com/quintetkit/scopecheck/issues"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "README.ja.md",
+    "LICENSE"
+  ],
+  "devDependencies": {
+    "@types/node": "^26.4.1",
+    "typescript": "^5.9.3"
+  }
 }

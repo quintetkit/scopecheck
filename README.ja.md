@@ -35,13 +35,24 @@ Issue が3つなら目で見て気づけます。15 になると無理です。
 
 ## 導入
 
-Node 22.18 以降（ビルド不要でそのまま .ts を実行します）と、
-GitHub から Issue を読むなら [`gh`](https://cli.github.com/) が要ります。
+```bash
+npx @quintetkit/scopecheck --repo owner/name
+```
+
+インストールもビルドも不要です。**実行時の依存はゼロ**です。
+
+Node 22.18 以降と、GitHub から Issue を読むなら
+[`gh`](https://cli.github.com/) が要ります。
+
+clone して使う場合は、TypeScript をそのまま実行できます。
 
 ```bash
 git clone https://github.com/quintetkit/scopecheck
 node scopecheck/src/cli.ts --repo owner/name
 ```
+
+（npm 版がコンパイル済みの JavaScript なのは、**Node が `node_modules` 配下の
+ファイルから型を除去することを拒否する**ためです。clone した場合は元のまま動きます。）
 
 ## 使い方
 
