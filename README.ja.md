@@ -160,6 +160,14 @@ scopecheck は、そのワークフローが前提にしている
 [ccheck](https://github.com/quintetkit/ccheck) — `.claude/` の設定を検査します。
 指摘には必ず公式ドキュメントへの出典が付きます。
 
+[sharedfiles](https://github.com/quintetkit/sharedfiles) は、Issue が無い段階で
+同じ問いに答えます。git の履歴を読んで、**ほとんどのコミットが触るファイル**と
+**常に一緒に変わる組**を出します。宣言は要りません。
+
+```bash
+npx @quintetkit/sharedfiles
+```
+
 ## ライセンス
 
 MIT

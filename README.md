@@ -165,6 +165,14 @@ that workflow depends on: **Issues that share files must not run in parallel.**
 [ccheck](https://github.com/quintetkit/ccheck) lints `.claude/` configuration,
 citing the documentation for every finding.
 
+[sharedfiles](https://github.com/quintetkit/sharedfiles) answers it before any
+Issue exists: it reads the git history and reports which files most commits
+touch, and which files always change together. No declarations needed.
+
+```bash
+npx @quintetkit/sharedfiles
+```
+
 ## License
 
 MIT
