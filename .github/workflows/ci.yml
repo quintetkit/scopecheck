@@ -29,7 +29,7 @@ jobs:
           node src/cli.ts --dir test/fixtures/broken --root . > /dev/null
           code=$?
           set -e
-          [ "$code" = "1" ] || { echo "終了コードが $code（1 のはず）"; exit 1; }
+          [ "$code" = "1" ] || { echo "終了コードが ${code}（1 のはず）"; exit 1; }
 
   self-check:
     # 自分自身の Issue を自分で検査する。動かないものは出さない
