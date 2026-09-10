@@ -149,11 +149,20 @@ told anyone that in advance either. No false positives on that run.
 
 ## GitHub Actions
 
+In CI. **The action runs TypeScript directly, so the runner needs Node 22.18
+or later** -- the preinstalled version is not guaranteed to be new enough, and
+without this step you get `ERR_UNKNOWN_FILE_EXTENSION`, which says nothing
+about Node:
+
 ```yaml
+- uses: actions/checkout@v5
+- uses: actions/setup-node@v5
+  with: { node-version: "22.18" }
 - uses: quintetkit/scopecheck@v1
   with:
     repo: ${{ github.repository }}
 ```
+
 
 ## Related
 

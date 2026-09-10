@@ -144,11 +144,20 @@ Issue どうしの重なりは、まだ計画の問題として直せます。
 
 ## GitHub Actions
 
+CI で。**この action は TypeScript を直接実行するので、ランナーに Node 22.18
+以降が必要です。** 最初から入っている版が十分新しいとは限らず、このステップが
+無いと `ERR_UNKNOWN_FILE_EXTENSION` で落ちます（Node のバージョンには
+一言も触れないエラーです）。
+
 ```yaml
+- uses: actions/checkout@v5
+- uses: actions/setup-node@v5
+  with: { node-version: "22.18" }
 - uses: quintetkit/scopecheck@v1
   with:
     repo: ${{ github.repository }}
 ```
+
 
 ## 関連
 

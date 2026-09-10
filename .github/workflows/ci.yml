@@ -45,3 +45,55 @@ jobs:
       - env:
           GH_TOKEN: ${{ github.token }}
         run: node src/cli.ts --repo "$GITHUB_REPOSITORY" --root . --format github
+
+  action:
+    # **composite action として、宣言している最低バージョンでも呼べるか。**
+    # 新しい Node だけで通しても「22.18 以降」という主張は検証されない
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: ["22.18", "25"]
+    steps:
+      - uses: actions/checkout@v5
+        with: { fetch-depth: 0 }
+      - uses: actions/setup-node@v5
+        with: { node-version: "${{ matrix.node }}" }
+      - uses: ./
+        with:
+          repo: quintetkit/scopecheck
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  action-old-node:
+    # **古い Node で呼ばれたとき、何が起きるかを固定する。**
+    #
+    # この action は src/cli.ts をそのまま node に渡すので、型ストリップが
+    # 既定で有効でない Node だと ERR_UNKNOWN_FILE_EXTENSION で落ちる。
+    # その文言は Node のバージョンに一言も触れない。
+    #
+    # 落ちること自体は正しい。**理由が伝わることを確かめる。**
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with: { fetch-depth: 0 }
+      - uses: actions/setup-node@v5
+        with: { node-version: '20' }
+      - id: run
+        continue-on-error: true
+        uses: ./
+        with:
+          repo: quintetkit/scopecheck
+      - shell: bash
+        run: |
+          note="$RUNNER_TEMP/scopecheck-node-unsupported"
+          if [ "${{ steps.run.outcome }}" != "failure" ]; then
+            echo "Node 20 で通ってしまった。ガードが効いていない"
+            exit 1
+          fi
+          # **「落ちた」だけでは足りない。** ガードが出した失敗なのか、
+          # 素の ERR_UNKNOWN_FILE_EXTENSION なのかを区別する
+          if [ ! -f "$note" ]; then
+            echo "落ちたが、バージョン確認のステップが出した失敗ではない"
+            exit 1
+          fi
+          echo "Node $(cat "$note") をバージョン確認で拒否した（期待どおり）"
