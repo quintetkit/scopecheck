@@ -168,6 +168,11 @@ scopecheck は、そのワークフローが前提にしている
 npx @quintetkit/sharedfiles
 ```
 
+この検査が突き合わせている一覧 — プロジェクトの設定ファイルが受け取って無視する
+71 個のキーと、それぞれが実際に要求するスコープ — はこちらです。
+
+https://quintetkit.github.io/reference/claude-code-settings-scope.html
+
 UI 設計人格・レビュー基準・Issue 単位の並列実行スクリプト・実践ガイド11章を足した
 [Quintet は有料](https://quartet-dev.booth.pm/items/8807156)です。
 
