@@ -173,6 +173,11 @@ touch, and which files always change together. No declarations needed.
 npx @quintetkit/sharedfiles
 ```
 
+The full list this checks against — all 71 keys that a project settings file
+accepts and then ignores, with the scope each one actually requires — is here:
+
+https://quintetkit.github.io/en/reference/claude-code-settings-scope.html
+
 A larger version with a UI Designer persona, the Reviewer's decision criteria,
 a per-Issue parallel execution script and a 11-chapter guide is
 [sold as Quintet](https://quintetkit.gumroad.com/l/quintet).
